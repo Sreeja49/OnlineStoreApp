@@ -98,6 +98,7 @@ fun ProductCard(product: ProductModelClass, onItemClick: (ProductModelClass) -> 
             NetworkImage(url = product.image, contentDescription = "Product Image")
             Text(product.name, style = MaterialTheme.typography.h6)
             Text("Price: ${product.price}")
+
         }
     }
 }
