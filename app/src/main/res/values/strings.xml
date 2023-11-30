@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">OnlineStoreApp</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_products">ActivityProducts</string>
+    <string name="title_activity_product_detail">ProductDetailActivity</string>
+</resources>
