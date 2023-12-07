@@ -19,6 +19,11 @@
             android:label="@string/title_activity_product_detail"
             android:theme="@style/Theme.OnlineStoreApp" />
         <activity
+            android:name=".CartActivity"
+            android:exported="false"
+            android:label="@string/title_activity_products"
+            android:theme="@style/Theme.OnlineStoreApp" />
+        <activity
             android:name=".ActivityProducts"
             android:exported="false"
             android:label="@string/title_activity_products"

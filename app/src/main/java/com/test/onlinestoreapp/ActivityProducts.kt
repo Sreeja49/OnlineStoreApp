@@ -24,6 +24,7 @@ import com.test.onlinestoreapp.ui.theme.OnlineStoreAppTheme
 
 @Keep
 data class ProductModelClass(
+    val id: String = "",
     val name: String = "",
     val price: Double = 0.0,
     val description: String = "",
@@ -50,6 +51,7 @@ class ActivityProducts : ComponentActivity() {
 fun ProductList() {
     val context = LocalContext.current
     val products = remember { mutableStateOf(listOf<ProductModelClass>()) }
+
     LaunchedEffect(key1 = "loadData") {
         val database = FirebaseDatabase.getInstance()
         val myRef = database.getReference("products")
@@ -69,6 +71,7 @@ fun ProductList() {
                     ProductCard(product) {
 
                         val intent = Intent(context, ProductDetailActivity::class.java)
+                        intent.putExtra("productId", product.id)
                         intent.putExtra("productName", product.name)
                         intent.putExtra("productPrice", product.price)
                         intent.putExtra("productDescription", product.description)
