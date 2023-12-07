@@ -50,7 +50,6 @@ class ActivityProducts : ComponentActivity() {
 fun ProductList() {
     val context = LocalContext.current
     val products = remember { mutableStateOf(listOf<ProductModelClass>()) }
-
     LaunchedEffect(key1 = "loadData") {
         val database = FirebaseDatabase.getInstance()
         val myRef = database.getReference("products")
