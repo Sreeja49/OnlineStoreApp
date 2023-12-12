@@ -91,7 +91,7 @@ fun ProductList() {
                             val intent = Intent(context, ActivityOrders::class.java)
                             context.startActivity(intent)
                         }) {
-                            Text("Cart")
+                            Text("Orders")
                         }
                         DropdownMenuItem(onClick = {
                             val intent = Intent(context, ActivityOrders::class.java)
