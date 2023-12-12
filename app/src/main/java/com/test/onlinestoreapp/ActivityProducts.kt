@@ -1,5 +1,7 @@
 package com.test.onlinestoreapp
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,13 +13,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberImagePainter
 import com.google.firebase.database.FirebaseDatabase
 import com.test.onlinestoreapp.ui.theme.OnlineStoreAppTheme
@@ -47,12 +54,14 @@ class ActivityProducts : ComponentActivity() {
     }
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ProductList() {
     val context = LocalContext.current
     val products = remember { mutableStateOf(listOf<ProductModelClass>()) }
-
+    val expanded = remember { mutableStateOf(false) }
     LaunchedEffect(key1 = "loadData") {
+        Utils.showProgressDialog(context)
         val database = FirebaseDatabase.getInstance()
         val myRef = database.getReference("products")
 
@@ -61,34 +70,72 @@ fun ProductList() {
                 snapshot.getValue(ProductModelClass::class.java)!!
             }
             products.value = items
+            Utils.hideProgressDialog()
         }
     }
 
-    LazyColumn {
-        items(products.value.chunked(1)) { rowItems ->
-            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                for (product in rowItems) {
-                    ProductCard(product) {
-
-                        val intent = Intent(context, ProductDetailActivity::class.java)
-                        intent.putExtra("productId", product.id)
-                        intent.putExtra("productName", product.name)
-                        intent.putExtra("productPrice", product.price)
-                        intent.putExtra("productDescription", product.description)
-                        intent.putExtra("productImage", product.image)
-                        context.startActivity(intent)
-
-
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Products List") },
+                actions = {
+                    IconButton(onClick = { expanded.value = true }) {
+                        Icon(Icons.Filled.MoreVert, contentDescription = "More")
+                    }
+                    DropdownMenu(
+                        expanded = expanded.value,
+                        onDismissRequest = { expanded.value = false }
+                    ) {
+                        DropdownMenuItem(onClick = {
+                            expanded.value = false
+                            val intent = Intent(context, ActivityOrders::class.java)
+                            context.startActivity(intent)
+                        }) {
+                            Text("Cart")
+                        }
+                        DropdownMenuItem(onClick = {
+                            val intent = Intent(context, ActivityOrders::class.java)
+                            context.startActivity(intent)
+                            if(context is Activity){
+                                context.finish()
+                            }
+                            expanded.value = false
+                        }) {
+                            Text("Logout")
+                        }
                     }
                 }
-                if (rowItems.size < 2) {
+            )
+        }
+    ) {
+        LazyColumn {
+            items(products.value.chunked(1)) { rowItems ->
+                Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                    for (product in rowItems) {
+                        ProductCard(product) {
 
-                    Spacer(modifier = Modifier.weight(1f).padding(horizontal = 8.dp))
+                            val intent = Intent(context, ProductDetailActivity::class.java)
+                            intent.putExtra("productId", product.id)
+                            intent.putExtra("productName", product.name)
+                            intent.putExtra("productPrice", product.price)
+                            intent.putExtra("productDescription", product.description)
+                            intent.putExtra("productImage", product.image)
+                            context.startActivity(intent)
 
+
+                        }
+                    }
+                    if (rowItems.size < 2) {
+
+                        Spacer(modifier = Modifier.weight(1f).padding(horizontal = 8.dp))
+
+                    }
                 }
             }
         }
     }
+
+
 }
 
 @Composable

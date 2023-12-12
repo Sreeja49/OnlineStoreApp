@@ -5,4 +5,8 @@
     <string name="title_activity_sign_up">SignUpActivity</string>
     <string name="title_activity_products">ActivityProducts</string>
     <string name="title_activity_product_detail">ProductDetailActivity</string>
+    <string name="title_activity_cart">CartActivity</string>
+    <string name="title_activity_payment">PaymentActivity</string>
+    <string name="title_activity_orders">ActivityOrders</string>
+    <string name="title_activity_orders_detail">ActivityOrdersDetail</string>
 </resources>

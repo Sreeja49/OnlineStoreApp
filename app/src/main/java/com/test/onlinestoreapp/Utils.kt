@@ -19,4 +19,17 @@ object Utils {
         progressDialog?.dismiss()
         progressDialog = null
     }
+
+    fun SetData(context: Context, key: String, value: String) {
+        val sharedPref = context.getSharedPreferences("onlinestore", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putString(key, value)
+            apply()
+        }
+    }
+
+    fun GetData(context: Context, key: String, defaultValue: String = ""): String {
+        val sharedPref = context.getSharedPreferences("onlinestore", Context.MODE_PRIVATE)
+        return sharedPref.getString(key, defaultValue) ?: defaultValue
+    }
 }
