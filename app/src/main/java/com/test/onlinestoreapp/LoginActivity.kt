@@ -28,6 +28,11 @@ class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            if (Utils.GetData(this,"uid")!="") {
+                startActivity(Intent(this, ActivityProducts::class.java))
+                finish()
+
+            }
             OnlineStoreAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -83,6 +88,14 @@ private fun handleLogin(context: Context, email: String, password: String) {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
+
+                    if (user != null) {
+
+
+                        Utils.SetData(context,"uid",user.uid)
+
+
+                    }
                     Toast.makeText(context, "Login successfully!", Toast.LENGTH_SHORT).show()
                     Utils.hideProgressDialog()
                     val intent = Intent(context, ActivityProducts::class.java)

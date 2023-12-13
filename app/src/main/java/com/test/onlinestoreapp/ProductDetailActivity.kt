@@ -1,6 +1,7 @@
 package com.test.onlinestoreapp
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -8,6 +9,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
@@ -27,15 +30,16 @@ class ProductDetailActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val productId = intent.getStringExtra("productId") ?: "ProductId"
         val productName = intent.getStringExtra("productName") ?: "Product"
         val productPrice = intent.getDoubleExtra("productPrice", 0.0)
         val productDescription = intent.getStringExtra("productDescription") ?: "No description available."
         val productImage = intent.getStringExtra("productImage") ?: ""
-        val cartItemCount = 1
-
+        var databaseHandler=DatabaseHandler(this)
+        val cartItemCount=  databaseHandler.getCartItems().size
         setContent {
             OnlineStoreAppTheme {
-                ProductDetail(productName, productPrice, productDescription, productImage, cartItemCount)
+                ProductDetail(productId,productName, productPrice, productDescription, productImage, cartItemCount)
             }
         }
     }
@@ -43,25 +47,29 @@ class ProductDetailActivity : ComponentActivity() {
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ProductDetail(name: String, price: Double, description: String, imageUrl: String, cartItemCount: Int) {
+fun ProductDetail(id:String, name: String, price: Double, description: String, imageUrl: String, cartItemCount: Int) {
     val context = LocalContext.current
     Scaffold(
         topBar = {
             TopAppBar(
-                backgroundColor = Color(android.graphics.Color.parseColor("#50758D")),
 
+                backgroundColor = Color(android.graphics.Color.parseColor("#50758D")),
                 title = { Text("Product Detail")  },
                 actions = {
                     CartImageWithCounter(cartItemCount = cartItemCount, onCartClick = {
 
-                        Toast.makeText(context, "Cart clicked!", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(context, CartActivity::class.java)
+                        context.startActivity(intent)
+
+
+
                     })
                 }
             )
         }
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState()) ,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -76,6 +84,32 @@ fun ProductDetail(name: String, price: Double, description: String, imageUrl: St
             Button(
                 onClick = {
 
+                          var databaseHandler=DatabaseHandler(context);
+
+                          val previous_qty=databaseHandler.getQty(id)
+
+                          if(previous_qty.equals("")){
+
+                        val total_qty=0+1
+
+                        val product_total=total_qty.toDouble()*price
+
+                        Toast.makeText(context,"Added to cart",Toast.LENGTH_LONG).show()
+
+                          databaseHandler.saveIntoCart(id,name,total_qty.toString(),product_total.toString(),imageUrl)
+
+
+                    }
+                    else{
+
+                              val total_qty=previous_qty.toInt()+1
+
+                              val product_total=total_qty.toDouble()*price
+                              databaseHandler.updateQty(id,total_qty.toString(),product_total.toString())
+
+                              Toast.makeText(context,"Updated Cart",Toast.LENGTH_LONG).show()
+
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

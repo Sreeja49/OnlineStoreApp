@@ -91,14 +91,16 @@ fun ProductList() {
                             val intent = Intent(context, ActivityOrders::class.java)
                             context.startActivity(intent)
                         }) {
-                            Text("Orders")
+                            Text("My Orders")
                         }
                         DropdownMenuItem(onClick = {
-                            val intent = Intent(context, ActivityOrders::class.java)
+                            val intent = Intent(context, LoginActivity::class.java)
                             context.startActivity(intent)
                             if(context is Activity){
                                 context.finish()
                             }
+                            Utils.SetData(context,"uid","")
+
                             expanded.value = false
                         }) {
                             Text("Logout")
